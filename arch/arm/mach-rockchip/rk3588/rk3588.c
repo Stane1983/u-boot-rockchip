@@ -73,6 +73,20 @@ DECLARE_GLOBAL_DATA_PTR;
 #define BUS_IOC_GPIO3A_IOMUX_SEL_H	0x64
 #define BUS_IOC_GPIO3C_IOMUX_SEL_H	0x74
 
+#define BUS_IOC_GPIO3D_IOMUX_SEL_L      0x78
+
+#define GPIO0_BASE                      0xfd8a0000
+#define GPIO1_BASE                      0xfec20000
+#define GPIO2_BASE                      0xfec30000
+#define GPIO3_BASE                      0xfec40000
+#define GPIO4_BASE                      0xfec50000
+//Port Data Register
+#define GPIO_SWPORT_DR_L		0x00
+#define GPIO_SWPORT_DR_H		0x04
+//Port Data Direction Register
+#define GPIO_SWPORT_DDR_L		0x08
+#define GPIO_SWPORT_DDR_H		0x0c
+
 #define VCCIO3_5_IOC_BASE		0xfd5fa000
 #define IOC_VCCIO3_5_GPIO2A_DS_H	0x44
 #define IOC_VCCIO3_5_GPIO2B_DS_L	0x48
@@ -1066,6 +1080,13 @@ int arch_cpu_init(void)
 	writel(QOS_PRIORITY_LEVEL(3, 3), VOP_M0_PRIORITY_REG);
 	writel(QOS_PRIORITY_LEVEL(3, 3), VOP_M1_PRIORITY_REG);
 #endif
+
+	//green-led gpio3d0 on
+	writel(0x02000200, GPIO3_BASE + GPIO_SWPORT_DR_H);
+	//red-led gpio3d1 off
+	writel(0x01000000, GPIO3_BASE + GPIO_SWPORT_DR_H);
+	//gpio3d0 gpio3d1 out
+	writel(0x03000300, GPIO3_BASE + GPIO_SWPORT_DDR_H);
 
 	/* Select usb otg0 phy status to 0 that make rockusb can work at high-speed */
 	writel(0x00080008, USBGRF_BASE + USB_GRF_USB3OTG0_CON1);
